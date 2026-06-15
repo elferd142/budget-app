@@ -20,7 +20,6 @@ This is the "receiver" that lives inside your Google Sheet and accepts entries f
 
 ### Step 1 — Open your Google Sheet
 Open the budget spreadsheet you already have at:
-https://docs.google.com/spreadsheets/d/1ks6_QM54kbsojnL1waG-8GTMbLQFDXbfHt6O9KWMbOo
 
 ### Step 2 — Open the Script Editor
 1. Click **Extensions** in the top menu bar

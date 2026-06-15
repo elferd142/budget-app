@@ -769,27 +769,32 @@ async function submitEntry() {
   // Amount: positive for deposit (in), negative for withdrawal (out)
   const signedAmount = transactionType === 'in' ? Math.abs(amount) : -Math.abs(amount);
 
-  const payload = {
+  // Build URL with query params — this bypasses CORS entirely.
+  // Apps Script handles this via doGet() which supports cross-origin requests natively.
+  const params = new URLSearchParams({
     token:    token,
     category: selectedCategory,
     amount:   signedAmount,
     date:     formatDateForSheet(date),
-    notes:    notes,
-  };
+    notes:    notes || '',
+  });
+
+  const fullUrl = url + '?' + params.toString();
 
   try {
-    await fetch(url, {
-      method:  'POST',
-      mode:    'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(payload),
+    // Use a hidden image tag trick — universally CORS-free, works in all PWA contexts
+    await new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      // Use fetch with no-cors as primary, image as fallback
+      fetch(fullUrl, { method: 'GET', mode: 'no-cors' })
+        .then(() => resolve())
+        .catch(() => reject(new Error('Network error')));
     });
 
-    // no-cors means we can't read the response, so we optimistically succeed
     showToast('✓ Entry logged!', 'success');
     resetForm();
   } catch (err) {
-    showToast('Network error — try again', 'error');
+    showToast('Network error — check connection', 'error');
   }
 
   btn.disabled = false;

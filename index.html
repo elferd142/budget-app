@@ -631,13 +631,44 @@
 // ══════════════════════════════════
 // CATEGORIES (from your sheet)
 // ══════════════════════════════════
+// CATEGORIES: key = group label shown in UI, value = array of [displayName, sheetValue]
+// sheetValue is what gets written to column A (e.g. "FOOD,Groceries")
 const CATEGORIES = {
-  'GIVING':         ['Church Giving'],
-  'SAVINGS':        ['Emergency Fund', 'General Savings', 'Checking', 'ksavings', 'kchecking', 'kcar', 'kemergency', 'kextra'],
-  'HOUSING':        ['Phone', 'Music', 'Rent', 'Gas & Electric', 'apartment amenities', 'renters insurance', 'INTERNET'],
-  'TRANSPORTATION': ['Vehicle Maintenance', 'Gas', 'Car Insurance', 'triple AAA'],
-  'FOOD':           ['Food out', 'Groceries'],
-  'LIFESTYLE':      ['Kmoney', 'Dmoney', 'Kclothing', 'Dclothing', 'subscriptions', 'Misc', 'Hobbies', 'Dates', 'Money gifted to us', 'house stuff', 'Friend Benevolence', 'Gifts', 'Fun/Events'],
+  'GIVING':         [['Church Giving',        'GIVING,Church Giving']],
+  'SAVINGS':        [['Emergency Fund',        'SAVINGS,Emergency Fund'],
+                     ['General Savings',       'SAVINGS,General Savings'],
+                     ['Checking',              'SAVINGS,Checking'],
+                     ['ksavings',              'SAVINGS,ksavings'],
+                     ['kchecking',             'SAVINGS,kchecking'],
+                     ['kcar',                  'SAVINGS,kcar'],
+                     ['kemergency',            'SAVINGS,kemergency'],
+                     ['kextra',                'SAVINGS,kextra']],
+  'HOUSING':        [['Phone',                 'HOUSING,Phone'],
+                     ['Music',                 'HOUSING,Music'],
+                     ['Rent',                  'HOUSING,Rent'],
+                     ['Gas & Electric',        'HOUSING,Gas & Electric'],
+                     ['apartment amenities',   'HOUSING,apartment amenities'],
+                     ['renters insurance',     'HOUSING,renters insurance'],
+                     ['INTERNET',              'HOUSING,INTERNET']],
+  'TRANSPORTATION': [['Vehicle Maintenance',   'TRANSPORTATION,Vehicle Maintenance'],
+                     ['Gas',                   'TRANSPORTATION,Gas'],
+                     ['Car Insurance',         'TRANSPORTATION,Car Insurance'],
+                     ['triple AAA',            'TRANSPORTATION,triple AAA']],
+  'FOOD':           [['Food out',              'FOOD,Food out'],
+                     ['Groceries',             'FOOD,Groceries']],
+  'LIFESTYLE':      [['Kmoney',                'LIFESTYLE,Kmoney'],
+                     ['Dmoney',                'LIFESTYLE,Dmoney'],
+                     ['Kclothing',             'LIFESTYLE,Kclothing'],
+                     ['Dclothing',             'LIFESTYLE,Dclothing'],
+                     ['subscriptions',         'LIFESTYLE,subscriptions'],
+                     ['Misc',                  'LIFESTYLE,Misc'],
+                     ['Hobbies',               'LIFESTYLE,Hobbies'],
+                     ['Dates',                 'LIFESTYLE,Dates'],
+                     ['Money gifted to us',    'LIFESTYLE,Money gifted to us'],
+                     ['house stuff',           'LIFESTYLE,house stuff'],
+                     ['Friend Benevolence',    'LIFESTYLE,Friend Benevolence'],
+                     ['Gifts',                 'LIFESTYLE,Gifts'],
+                     ['Fun/Events',            'LIFESTYLE,Fun/Events']],
 };
 
 // ══════════════════════════════════
@@ -693,21 +724,22 @@ function buildCategoryPicker() {
 
     const row = document.createElement('div');
     row.className = 'chip-row';
-    items.forEach(cat => {
+    items.forEach(([displayName, sheetValue]) => {
       const chip = document.createElement('button');
       chip.className = 'chip';
-      chip.textContent = cat;
-      chip.addEventListener('click', () => selectCategory(cat, chip));
+      chip.textContent = displayName;          // what the user sees
+      chip.dataset.sheetValue = sheetValue;    // what gets sent to the sheet
+      chip.addEventListener('click', () => selectCategory(sheetValue, chip));
       row.appendChild(chip);
     });
     picker.appendChild(row);
   }
 }
 
-function selectCategory(cat, chipEl) {
+function selectCategory(sheetValue, chipEl) {
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
   chipEl.classList.add('selected');
-  selectedCategory = cat;
+  selectedCategory = sheetValue; // stores e.g. "FOOD,Groceries"
 }
 
 // ══════════════════════════════════
